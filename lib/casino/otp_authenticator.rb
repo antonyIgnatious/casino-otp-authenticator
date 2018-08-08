@@ -35,7 +35,8 @@ class CASino::OtpAuthenticator
   end
 
   def load_user_data(username)
-
+    user = @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
+    user_data(user)
   rescue ActiveRecord::RecordNotFound
     nil
   end
