@@ -22,7 +22,14 @@ class CASino::OtpAuthenticator
   end
 
   def validate(username, password)
-
+    otp_record = @otp_model.send("find_by_#{@options[:otp_mobile_column]}!", username)
+    password_from_database = otp_record.send(@options[:otp_value_column])
+    if password == password_from_database
+      user = @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
+      user_data(user)
+    else
+      false
+    end
   rescue ActiveRecord::RecordNotFound
     false
   end
@@ -34,6 +41,10 @@ class CASino::OtpAuthenticator
   end
 
   private
+
+  def user_data(user)
+    { username: user.send(@options[:user_mobile_column]), extra_attributes: extra_attributes(user) }
+  end
 
   def option_initialize(options)
     unless options.respond_to?(:deep_symbolize_keys)
@@ -61,5 +72,17 @@ class CASino::OtpAuthenticator
           self.inheritance_column = :_type_disabled
         end
       END
+  end
+
+  def extra_attributes(user)
+    attributes = {}
+    extra_attributes_option.each do |attribute_name, database_column|
+      attributes[attribute_name] = user.send(database_column)
+    end
+    attributes
+  end
+
+  def extra_attributes_option
+    @options[:extra_attributes] || {}
   end
 end
