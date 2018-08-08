@@ -3,7 +3,7 @@ $:.push File.expand_path('../lib', __FILE__)
 require 'casino/otp_authenticator/version'
 
 Gem::Specification.new do |s|
-  s.name        = 'casino-otp-authenticator'
+  s.name        = 'casino-otp_authenticator'
   s.version     = CASino::OtpAuthenticator::VERSION
   s.authors     = ['Antony Ignatious']
   s.email       = ['antonyignatious@ymail.com']
