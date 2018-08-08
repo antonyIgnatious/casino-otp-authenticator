@@ -1,12 +1,16 @@
 INTRODUCTION
-  Provides mechanism to use OTP as an authenticator for [CASino](https://github.com/rbCAS/CASino).
+
+    Provides mechanism to use OTP as an authenticator for [CASino](https://github.com/rbCAS/CASino).
 
 INSTALLATION
- add this to your Gemfile file
-  gem 'casino-otp_authenticator' ,git: 'https://github.com/antonyIgnatious/casino-otp_authenticator.git'
+   
+    add this to your Gemfile file:
+      gem 'casino-otp_authenticator' ,git: 'https://github.com/antonyIgnatious/casino-otp_authenticator.git'
 
 USAGE
-To use the OTP authenticator, configure it in your cas.yml:
+    
+    To use the OTP authenticator, configure it in your cas.yml:
+
     authenticators:
       my_company_sql:
         authenticator: "OTP"
