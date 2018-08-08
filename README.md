@@ -8,7 +8,7 @@
 
   Add this to your Gemfile file:
       
-      gem 'casino-otp_authenticator' ,git: 'https://github.com/antonyIgnatious/casino-otp_authenticator.git'
+      gem 'casino-otp_authenticator' ,git: 'https://github.com/antonyIgnatious/casino-otp-authenticator.git'
 
 ## USAGE:
     
