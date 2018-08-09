@@ -16,7 +16,7 @@
 
     authenticators:
       my_company_sql:
-        authenticator: "OTP"
+        authenticator: "Otp"
         options:
           connection:
             adapter: "mysql2"
@@ -25,10 +25,10 @@
             password: "secret"
             database: "users"
           user_table: "users"
-          user_mobile_column: "user_mobile"
-          otp_table: "otp_table"
-          otp_mobile_column: "mobile_number"
-          otp_value_column: "otp"
+          user_mobile_column: "user_mobile"           #column for mobile in user table
+          otp_table: "otp_table"                      #table for otp
+          otp_mobile_column: "mobile_number"          #column from otp table
+          otp_value_column: "otp"                     #column having otp value 
           extra_attributes:
             email: "email_column"
             fullname: "name_column"
