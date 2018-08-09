@@ -11,8 +11,8 @@ class CASino::OtpAuthenticator
     validate_option_data
     user_model_name = classify_table(@options[:user_table])
     otp_model_name = classify_table(@options[:otp_table])
-    user_model_class_name = "#{self.class.to_s}::#{user_model_name}"
-    otp_model_class_name = "#{self.class.to_s}::#{otp_model_name}"
+    user_model_class_name = "#{self.class}::#{user_model_name}"
+    otp_model_class_name = "#{self.class}::#{otp_model_name}"
     load_class(user_model_class_name, @options[:user_table])
     load_class(otp_model_class_name, @options[:otp_table])
     @user_model = user_model_class_name.constantize
@@ -24,7 +24,8 @@ class CASino::OtpAuthenticator
   def validate(username, password)
     otp_record = @otp_model.send("find_by_#{@options[:otp_mobile_column]}!", username)
     password_from_database = otp_record.send(@options[:otp_value_column])
-    if password == password_from_database
+    return false if password_from_database.blank?
+    if password == password_from_database && verify_otp(otp_record)
       user = @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
       user_data(user)
     else
@@ -43,6 +44,16 @@ class CASino::OtpAuthenticator
 
   private
 
+  def verify_otp(otp_record)
+    if otp_record.send(@options[:expiry_column]) > DateTime.now && otp_record.send(@options[:resend_column]) <= @options[:resend_limit]
+      otp_record.destroy!
+    elsif otp_record.send(@options[:expiry_column]) < DateTime.now
+      false
+    elsif otp_record.resend_count > @options[:resend_limit]
+      false
+    end
+  end
+
   def user_data(user)
     { username: user.send(@options[:user_mobile_column]), extra_attributes: extra_attributes(user) }
   end
@@ -60,7 +71,7 @@ class CASino::OtpAuthenticator
   end
 
   def classify_table(table_name)
-    if @options[:connection].kind_of?(Hash) && @options[:connection][:database]
+    if @options[:connection].is_a?(Hash) && @options[:connection][:database]
       model_name = "#{@options[:connection][:database].gsub(/[^a-zA-Z]+/, '')}_#{table_name}"
     end
     model_name.classify

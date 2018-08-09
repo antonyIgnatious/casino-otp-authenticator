@@ -29,6 +29,9 @@
           otp_table: "otp_table"
           otp_mobile_column: "mobile_number"
           otp_value_column: "otp"
+          resend_column: "otp column for resend"
+          expiry_column: "otp column for expiry"
+          resend_limit: "resend limit"
           extra_attributes:
             email: "email_column"
             fullname: "name_column"
