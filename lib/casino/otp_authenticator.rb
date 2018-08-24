@@ -30,11 +30,17 @@ class CASino::OtpAuthenticator
     p "mobile"
     p mobile
     return false if mobile.blank?
+    p "p1"
     otp_record = @otp_model.send("find_by_#{@options[:otp_mobile_column]}!", mobile)
+    p "p2"
     password_from_database = otp_record.send(@options[:otp_value_column])
+    p "p3"
     return false if password_from_database.blank?
+    p "p4"
     if password == password_from_database && verify_otp(otp_record)
+      p "p5"
       user = @user_model.send("find_by_#{@options[:user_mobile_column]}!", mobile)
+      p "p6"
       user_data(user)
     else
       false
