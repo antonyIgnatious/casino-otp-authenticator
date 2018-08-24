@@ -26,7 +26,7 @@ class CASino::OtpAuthenticator
     p username
     p password  
     p @options
-    user_email = @user_model.send("find_by_#{@options[:user_email_column]}!", username)
+    user_email = @user_model.send("find_by_#{@options[:user_email_column]}", username)
     p "user_email"
     p user_email
     user_mobile = @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
