@@ -33,10 +33,13 @@ class CASino::OtpAuthenticator
     p "p1"
     otp_record = @otp_model.send("find_by_#{@options[:otp_mobile_column]}!", mobile)
     p "p2"
+    p otp_record
     password_from_database = otp_record.send(@options[:otp_value_column])
     p "p3"
+    p password_from_database
     return false if password_from_database.blank?
     p "p4"
+    p password
     p password == password_from_database
     p verify_otp(otp_record)
     if password == password_from_database && verify_otp(otp_record)
