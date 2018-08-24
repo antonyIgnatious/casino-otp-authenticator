@@ -24,11 +24,14 @@ class CASino::OtpAuthenticator
   def validate(username, password)
     p "username and password"
     p username
-    p password
-    p @user_model.send("find_by_#{@options[:user_email_column]}!", username)
-    p  @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
-    user_record = @user_model.send("find_by_#{@options[:user_email_column]}!", username) ||
-                  @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
+    p password  
+    user_email = @user_model.send("find_by_#{@options[:user_email_column]}!", username)
+    p "user_email"
+    p user_email
+    user_mobile = @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
+    p "user_mobile"
+    p user_mobile
+    user_record = user_email || user_mobile
     p "user_record"
     p user_record
     mobile = user_record.send(@options[:user_mobile_column])
