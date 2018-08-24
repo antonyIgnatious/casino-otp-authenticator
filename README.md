@@ -26,6 +26,7 @@
             database: "users"
           user_table: "users"
           user_mobile_column: "user_mobile"           #column for mobile in user table
+          user_email_column: "user_email"             #column for email in user table
           otp_table: "otp_table"                      #table for otp
           otp_mobile_column: "mobile_number"          #column from otp table
           otp_value_column: "otp"                     #column having otp value 

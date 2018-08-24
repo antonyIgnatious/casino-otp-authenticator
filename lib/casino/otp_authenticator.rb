@@ -22,7 +22,11 @@ class CASino::OtpAuthenticator
   end
 
   def validate(username, password)
-    otp_record = @otp_model.send("find_by_#{@options[:otp_mobile_column]}!", username)
+    user_record = @user_model.send("find_by_#{@options[:user_email_column]}!", username) ||
+                  @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
+    mobile = user_record.send(@options[:user_mobile_column])
+    return false if mobile.blank?
+    otp_record = @otp_model.send("find_by_#{@options[:otp_mobile_column]}!", mobile)
     password_from_database = otp_record.send(@options[:otp_value_column])
     return false if password_from_database.blank?
     if password == password_from_database && verify_otp(otp_record)
