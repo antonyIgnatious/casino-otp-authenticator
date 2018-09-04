@@ -21,12 +21,43 @@ class CASino::OtpAuthenticator
     @otp_model.establish_connection @options[:connection]
   end
 
-  def validate(username, password)
+  def validate1(username, password)
     user_record = @user_model.send("find_by_#{@options[:user_email_column]}", username) ||
                   @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
     mobile = user_record.send(@options[:user_mobile_column])
     return false if mobile.blank?
     otp_record = @otp_model.send("find_by_#{@options[:otp_mobile_column]}!", mobile)
+    password_from_database = otp_record.send(@options[:otp_value_column])
+    return false if password_from_database.blank?
+    
+    if password == password_from_database && verify_otp(otp_record)
+      user = @user_model.send("find_by_#{@options[:user_mobile_column]}!", mobile)
+      user_data(user)
+    else
+      false
+    end
+  rescue ActiveRecord::RecordNotFound
+    false
+  end
+
+  def validate(username, password)
+    user_record = @user_model.send("find_by_#{@options[:user_email_column]}", username) ||
+                  @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
+    mobile = user_record.send(@options[:user_mobile_column])
+    p "mobile"
+    p mobile
+    user_id = user_record.send(id)
+    p "user_id"
+    p user_id
+    return false if user_id.blank?
+    otp_record_id = @otp_model.send("find_by_#{@options[:otp_token_record_id_column]}!", user_id)
+    p "otp_record"
+    p otp_record_id
+    otp_record_type = @otp_model.send("find_by_#{@options[:otp_token_record_type_column]}!", "UserAccount")
+    p "otp_record_type"
+    p otp_record_type
+    otp_record = otp_record_id && otp_record_type
+    p otp_record    
     password_from_database = otp_record.send(@options[:otp_value_column])
     return false if password_from_database.blank?
     
