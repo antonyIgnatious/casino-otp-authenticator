@@ -44,11 +44,7 @@ class CASino::OtpAuthenticator
     user_record = @user_model.send("find_by_#{@options[:user_email_column]}", username) ||
                   @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
     mobile = user_record.send(@options[:user_mobile_column])
-    p "mobile"
-    p mobile
     user_id = user_record.send("id")
-    p "user_id"
-    p user_id
     return false if user_id.blank?
     otp_record_id = @otp_model.send("find_by_#{@options[:otp_token_record_id_column]}!", user_id)    
     password_from_database = otp_record.send(@options[:otp_value_column])
