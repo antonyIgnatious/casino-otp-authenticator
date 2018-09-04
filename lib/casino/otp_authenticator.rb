@@ -46,7 +46,7 @@ class CASino::OtpAuthenticator
     mobile = user_record.send(@options[:user_mobile_column])
     p "mobile"
     p mobile
-    user_id = user_record.send(id)
+    user_id = user_record.send("id")
     p "user_id"
     p user_id
     return false if user_id.blank?
