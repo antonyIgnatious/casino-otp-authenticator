@@ -27,13 +27,8 @@ class CASino::OtpAuthenticator
     user_id = user_record.send('id')
     Rails.logger.info user_record
     return false if user_id.blank?
-    a = @otp_model.send("find_by_#{@options[:otp_token_record_id_column]}", user_id)
-    b = @otp_model.send("find_by_#{@options[:otp_token_record_type_column]}", 'UserAccount')
-    p a
-    p b
-    p a && b
     otp_record = @otp_model.where("#{@options[:otp_token_record_id_column]}": user_id)
-                           .where("#{@options[:otp_token_record_type_column]}": 'UserAccount')
+                           .where("#{@options[:otp_token_record_type_column]}": 'UserAccount').first
     return false if otp_record.nil?
     p otp_record
     password_from_database = otp_record.send(@options[:otp_value_column])
