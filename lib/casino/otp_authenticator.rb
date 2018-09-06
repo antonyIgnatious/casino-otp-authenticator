@@ -25,19 +25,14 @@ class CASino::OtpAuthenticator
     user_record = @user_model.send("find_by_#{@options[:user_email_column]}", username) ||
                   @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
     user_id = user_record.send('id')
-    Rails.logger.info user_record
     return false if user_id.blank?
     otp_record = @otp_model.where("#{@options[:otp_token_record_id_column]}": user_id)
-                           .where("#{@options[:otp_token_record_type_column]}": 'UserAccount').first
-    return false if otp_record.nil?
-    p otp_record
+                           .where("#{@options[:otp_token_record_type_column]}": 'UserAccount')
+    return false if otp_record.blank?
+    otp_record = otp_record.first
     password_from_database = otp_record.send(@options[:otp_value_column])
-    p password_from_database
     return false if password_from_database.blank?
-    p "password not blank"
-    p verify_otp(otp_record)
     if password == password_from_database && verify_otp(otp_record)
-      p "password matched"
       user_data(user_record)
     else
       false
@@ -47,12 +42,8 @@ class CASino::OtpAuthenticator
   end
 
   def load_user_data(username)
-    p "username"
-    p username
     user = @user_model.send("find_by_#{@options[:user_mobile_column]}", username) ||
            @user_model.send("find_by_#{@options[:user_email_column]}!", username)
-    p "load user"
-    p user
     user_data(user)
   rescue ActiveRecord::RecordNotFound
     nil
