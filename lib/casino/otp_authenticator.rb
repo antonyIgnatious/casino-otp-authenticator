@@ -52,11 +52,11 @@ class CASino::OtpAuthenticator
   private
 
   def verify_otp(otp_record)
-    if otp_record.send(@options[:expiry_column]) > Time.zone.now && otp_record.send(@options[:resend_column]) <= @options[:resend_limit]
+    if otp_record.send(@options[:expiry_column]) > Time.zone.now && otp_record.send(@options[:resend_column])&.to_i <= @options[:resend_limit].to_i
       otp_record.destroy!
     elsif otp_record.send(@options[:expiry_column]) < Time.zone.now
       false
-    elsif otp_record.resend_count > @options[:resend_limit]
+    elsif otp_record.resend_count&.to_i > @options[:resend_limit].to_i
       false
     end
   end
