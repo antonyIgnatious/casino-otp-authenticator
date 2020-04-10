@@ -29,11 +29,12 @@ class CASino::OtpAuthenticator
                   @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
     user_id = user_record.send('id')
     return false if user_id.blank?
-    otp_record = @otp_model.send("find_by_#{@options[:otp_token_record_id_column]}!", user_id) &&
-                 @otp_model.send("find_by_#{@options[:otp_token_record_type_column]}!", 'UserAccount')
+    otp_record = @otp_model.where("#{@options[:otp_token_record_id_column]}": user_id)
+                           .where("#{@options[:otp_token_record_type_column]}": 'UserAccount')
+    return false if otp_record.blank?
+    otp_record = otp_record.first
     password_from_database = otp_record.send(@options[:otp_value_column])
     return false if password_from_database.blank?
-
     if password == password_from_database && verify_otp(otp_record)
       user_data(user_record)
     else
@@ -44,7 +45,8 @@ class CASino::OtpAuthenticator
   end
 
   def load_user_data(username)
-    user = @user_model.send("find_by_#{@options[:user_mobile_column]}!", username)
+    user = @user_model.send("find_by_#{@options[:user_mobile_column]}", username) ||
+           @user_model.send("find_by_#{@options[:user_email_column]}!", username)
     user_data(user)
   rescue ActiveRecord::RecordNotFound
     nil
@@ -53,11 +55,11 @@ class CASino::OtpAuthenticator
   private
 
   def verify_otp(otp_record)
-    if otp_record.send(@options[:expiry_column]) > DateTime.now && otp_record.send(@options[:resend_column]) <= @options[:resend_limit]
+    if otp_record.send(@options[:expiry_column]) > Time.zone.now && otp_record.send(@options[:resend_column])&.to_i <= @options[:resend_limit].to_i
       otp_record.destroy!
-    elsif otp_record.send(@options[:expiry_column]) < DateTime.now
+    elsif otp_record.send(@options[:expiry_column]) < Time.zone.now
       false
-    elsif otp_record.resend_count > @options[:resend_limit]
+    elsif otp_record.resend_count&.to_i > @options[:resend_limit].to_i
       false
     end
   end
