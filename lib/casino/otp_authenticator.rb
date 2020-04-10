@@ -7,6 +7,7 @@ class CASino::OtpAuthenticator
   end
 
   def initialize(options)
+    binding.pry
     option_initialize(options)
     validate_option_data
     user_model_name = classify_table(@options[:user_table])
